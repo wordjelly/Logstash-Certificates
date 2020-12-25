@@ -1,0 +1,4 @@
+instances:
+  - name: "host" 
+    ip: 
+      - '${IP_ADDRESS}'
