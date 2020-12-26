@@ -11,8 +11,17 @@ Simplify creation of Logstash SSL certificates.
 export ELASTICSEARCH_PATH="/path/to/elasticsearch/directory"
 export LOGSTASH_PATH="/path/to/logstash/directory"
 
-## the ip address of your machine(the ip address where logstash will run, this can be 0.0.0.0 if you are using logstash on your local machine. It can be set to your machines IP address, like 192.168.1.5.)
-export IP_ADDRESS="ip address"
+## the ip addresses where logstash will be running, make sure they are comma seperated. This is useful if you have logstash running on more than one IP, or your network has more than one IP address.
+## by default logstash runs on 0.0.0.0 and so in the logstash_ssl.conf, I haven't explicitly mentioned a host.
+## I have made sure to add 0.0.0.0 in the IP addresses here, so that the certificate will allow clients, hitting 0.0.0.0.
+## your clients can also use your machines IP address, like 192.168.1.5 for eg (you can find this in wifi-settings in your ethernet connection)
+## basically add as many ip's as you like, to make sure the certificate includes them. Then as long as logstash is running on these IP's everything works.
+
+export IP_ADDRESSES="0.0.0.0,192.168.1.5,192.168.1.13"
+
+## IN order to test your certificates, using sh ./check_cert, curl needs to know which IP address to hit. By default check_cert will use 0.0.0.0 as the IP address to test the certificate against logstash. If however, you already know which IP address your Logstash is running on, simply export and env var like this, and the script uses that instead. This is also used by the sample ruby script, which will otherwise try to resolve the machine's ip address and use that.
+export IP_ADDRESS="0.0.0.0" 
+
 
 ## the hostname of your machine(the qualified host like: www.google.com, where logstash will run, if it is running on a domain.)
 export HOSTNAME="www.example.com"
@@ -70,6 +79,10 @@ The important line is "SSL certificate verify ok." and the last line with "Accep
 If you reached this point, any SSL client with the client key, client certificate and the CA certificate can now ship logs to logstash at port 1443. You can change this port in the logstash_ssl.conf file if you want to.
 Note that you need to open this port to the outside world, on your machine, if you want to receive logs from the outside.
 
+### Points to note:
+We didn't explicitly specify a hostname in the logstash_ssl.conf file's tcp => input.
+This is because it defaults to 0.0.0.0 and that is already included in our certificates.
+If your logstash port is open to the external internet, you can leave this as it is, since traffic on your machines IP address will automatically get forwarded to 0.0.0.0. If logstash is not open to the public internet and you want it running on a specific host, you can specify that, but make sure to add it to your ENV['IP_ADDRESSES'].
 
 ## Send Rails Logs to Logstash over SSL:
 

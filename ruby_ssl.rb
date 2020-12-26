@@ -1,11 +1,30 @@
 require 'socket'
 require 'openssl'
 require 'json'
+require 'active_support/all'
 
-host = ENV["IP_ADDRESS"]
+def get_machine_ip
+	ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}
+	ip.ip_address
+end
+
+def get_logstash_ip
+	machine_ip = get_machine_ip
+	return ENV["IP_ADDRESS"] unless ENV["IP_ADDRESS"].nil?
+
+	unless ENV["IP_ADDRESSES"].blank?
+		ENV["IP_ADDRESSES"].split(",").each do |ip|
+			if machine_ip == ip
+				return ip
+			end
+		end
+	end
+	return "0.0.0.0"
+end	
+
 port = ENV["LOGSTASH_PORT"]
 
-socket = TCPSocket.open(host,port)
+socket = TCPSocket.open(get_logstash_ip,port)
 
 ssl_context = OpenSSL::SSL::SSLContext.new()
 
