@@ -1,6 +1,10 @@
 # Logstash-Certificates
 Simplify creation of Logstash SSL certificates.
 
+## Download Elasticsearch and Logstash
+Run as a non-root user
+
+
 ## Setup Logstash with SSL:
 
 1. Clone the repo
@@ -9,7 +13,7 @@ Simplify creation of Logstash SSL certificates.
 
 ```
 export ELASTICSEARCH_PATH="/path/to/elasticsearch/directory"
-export LOGSTASH_PATH="/path/to/logstash/directory"
+export SSL_CERTIFICATES_PATH="/path/to/logstash/directory"
 
 ## the ip addresses where logstash will be running, make sure they are comma seperated. This is useful if you have logstash running on more than one IP, or your network has more than one IP address.
 ## by default logstash runs on 0.0.0.0 and so in the logstash_ssl.conf, I haven't explicitly mentioned a host.
@@ -41,7 +45,7 @@ The commmand should create a directory called "ssl_certificates" under your logs
 5. Copy the logstash_ssl.conf file from the repo to the logstash/config directory. This file contains logstash configuration for a 'tcp' input.
 
 ```
-cp ./logstash_ssl.conf $LOGSTASH_PATH/config/
+cp ./logstash_ssl.conf path/to/logstash-/config/
 ```
 
 6. Run the logstash server with the configuration file
