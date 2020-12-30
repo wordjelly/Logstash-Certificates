@@ -25,9 +25,11 @@ echo 'export ELASTICSEARCH_PATH="/usr/share/elasticsearch"' >> /etc/environment
 
 ## Now since we are using digitalocean with IPV4, we need to export an IP addresses variable.
 ## get the IP address of the droplet.
-IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*$
+IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
 command="export IP_ADDRESSES=${IP},0.0.0.0"
 echo "${command}" >> ~/.bashrc
 echo "${command}" >> /etc/environment
 
 source /etc/environment
+
+echo 'export LOGSTASH_PORT=1443'
