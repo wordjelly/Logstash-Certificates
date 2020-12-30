@@ -3,6 +3,3 @@ rm -r $SSL_CERTIFICATES_PATH/ssl_certificates
 mkdir $SSL_CERTIFICATES_PATH/ssl_certificates
 $ELASTICSEARCH_PATH/bin/elasticsearch-certutil cert --name host --ip $IP_ADDRESSES --out $SSL_CERTIFICATES_PATH/ssl_certificates/certificates.zip  --keep-ca-key --pem
 unzip $SSL_CERTIFICATES_PATH/ssl_certificates/certificates.zip -d $SSL_CERTIFICATES_PATH/ssl_certificates
-
-# now we have these certificates in the SSL_CERTIFICATES PATH.
-# now time to copy the 
