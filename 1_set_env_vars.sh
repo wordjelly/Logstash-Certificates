@@ -32,6 +32,7 @@ command="export IP_ADDRESSES=${IPS}0.0.0.0"
 echo "${command}" >> ~/.bashrc
 echo "${command}" >> /etc/environment
 
-source /etc/environment
+echo 'export LOGSTASH_PORT=1443' >> ~/.bashrc
+echo 'export LOGSTASH_PORT=1443' >> /etc/environment
 
-echo 'export LOGSTASH_PORT=1443'
+source /etc/environment
