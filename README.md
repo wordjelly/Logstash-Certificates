@@ -83,6 +83,7 @@ cp ./logstash_ssl.conf path/to/logstash-/config/
 
 ```
 #to start logstash as a service
+# sudo systemctl stop logstash.service
 # sudo systemctl start logstash.service
 
 # from logstash root directory
@@ -126,3 +127,9 @@ If your logstash port is open to the external internet, you can leave this as it
 
 Check the ruby_ssl.rb file to see how to use a simple tcp socket to send logs to logstash using the certificates we created above.
 
+## Configure mailgun with postfix
+
+Follow entire setup at following link
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04
+If your domain is already configured with mailgun through your domain host(for DNS), you don't need to do the entire DNS/CNAME Part of it.
+Go directly to the postfix configuration. You only need the username, password from your mailgun domain settings.
