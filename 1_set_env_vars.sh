@@ -28,7 +28,7 @@ echo 'export ELASTICSEARCH_PATH="/usr/share/elasticsearch"' >> /etc/environment
 IPS=$(hostname -I)
 IPS=$(echo "$IPS" | sed "s/\s/,/g")
 #IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-command="export IP_ADDRESSES=${IPS}0.0.0.0"
+command="export IP_ADDRESSES=\"${IPS}0.0.0.0\""
 echo "${command}" >> ~/.bashrc
 echo "${command}" >> /etc/environment
 
