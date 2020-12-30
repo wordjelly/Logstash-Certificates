@@ -2,14 +2,44 @@
 Simplify creation of Logstash SSL certificates.
 
 ## Download Elasticsearch and Logstash
-Run as a non-root user
-
-
-## Setup Logstash with SSL:
-
 1. Clone the repo
-2. Make sure that you have downloaded elasticsearch and logstash
-3. Set the environment vars
+2. Make sure that you have Ubuntu (min version 18) setup with all basic dependencies including java.
+3. Run sh 0_download_es_logstash.sh - this will download logstash and elasticsearch and configure services for them. (debian style installation)
+
+```
+sh ./0_download_es_logstash.sh
+```
+
+It installs different parts of the packages in different places.
+For eg.
+a. the config files are located in /etc/(logstash/elasticsearch)
+b. the bin files are located in usr/share/(elasticsearch/logstash)
+c. you can use this type of installation, preferably as it starts up logstashby default.
+
+4. If you want to download logstash and elasticsearch as individual files, you can download them and put them in the folder of your choice, but then you have manually configure the env vars.
+
+## Setup ENV VARS automatically
+
+Do this if you installed elasticsearch and logstash using the sh script above
+
+Run 
+
+```
+sh ./1_set_env_vars.sh
+```
+
+This will automatically set the environment variables:
+(they get added to root's ~/.bashrc and /etc/environment)
+1. SSL_CERTIFICATES_PATH
+2. ELASTICSEARCH PATH
+3. IP_ADDRESSES
+4. LOGSTASH PORT
+
+You can change them directly in the above two files if you need to.
+
+## Setup ENV VARS Manually
+
+Do this if you installed logstash and elasticsearch as zip/tar packages into directories of your choice.
 
 ```
 export ELASTICSEARCH_PATH="/path/to/elasticsearch/directory"
@@ -34,15 +64,16 @@ export HOSTNAME="www.example.com"
 export LOGSTASH_PORT=1443
 ```
 
-4. Generate the certificates by running
+
+## Generate Certificates:
 
 ```
 ./sh make_cert.sh
 ```
 
-The commmand should create a directory called "ssl_certificates" under your logstash root director. It will contain two directories "host" and "ca". The host contains the client key and certificate. the "ca" directory contains the CA key and certificate.
+The commmand should create a directory called "ssl_certificates" under your SSL_CERTIFICATES_PATH directory. It will contain two directories "host" and "ca". The host contains the client key and certificate. the "ca" directory contains the CA key and certificate.
 
-5. Copy the logstash_ssl.conf file from the repo to the logstash/config directory. This file contains logstash configuration for a 'tcp' input.
+5. Copy the logstash_ssl.conf file from the repo to the logstash config directory(either /etc/logstash/conf.d/ or your own custom place where you installed logstash). This file contains logstash configuration for a 'tcp' input.
 
 ```
 cp ./logstash_ssl.conf path/to/logstash-/config/
@@ -51,6 +82,9 @@ cp ./logstash_ssl.conf path/to/logstash-/config/
 6. Run the logstash server with the configuration file
 
 ```
+#to start logstash as a service
+# sudo systemctl start logstash.service
+
 # from logstash root directory
 bin/logstash -f ./config/logstash_ssl.conf
 ```

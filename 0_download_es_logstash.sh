@@ -20,9 +20,5 @@ sudo apt install logstash
 
 sudo apt install elasticsearch=6.8.3
 
-## CLONE LOGSTASH CERTIFICATES GITHUB REPO(WORDJELLY)
-cd /home
-mkdir Github
-cd /home/Github
-gh clone https://github.com/wordjelly/Logstash-Certificates.git
+
 

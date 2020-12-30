@@ -6,6 +6,10 @@
 ## IP_ADDRESSES : comma seperated list of ip addresses on which the logstash server will run. 
 ###################### ************ ######################
 
+## make this work from scratch on the server.
+## and only then we restart
+## the ip address thing is not working.
+## cloud printing.
 ## THIS SCRIPT ASSUMES THAT YOU DOWNLOADED ES AND LOGSTASH USING THE DOWNLOAD_ES_LOGSTASH.SH FILE.
 
 ## SET THE PATH WHERE YOU WANT TO STORE THE SSL CERTIFICATES FOR LOGSTASH.
@@ -21,6 +25,9 @@ echo 'export ELASTICSEARCH_PATH="/usr/share/elasticsearch"' >> /etc/environment
 
 ## Now since we are using digitalocean with IPV4, we need to export an IP addresses variable.
 ## get the IP address of the droplet.
-IP=$(ifconfig eth0 |grep "inet "|awk '{print $2}')
+IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*$
+command="export IP_ADDRESSES=${IP},0.0.0.0"
+echo "${command}" >> ~/.bashrc
+echo "${command}" >> /etc/environment
 
-echo 'export IP_ADDRESSES="$IP"'
+source /etc/environment
