@@ -18,17 +18,28 @@ mkdir /etc/logstash/certificates
 echo 'export SSL_CERTIFICATES_PATH="/etc/logstash/certificates"' >> ~/.bashrc
 echo 'export SSL_CERTIFICATES_PATH="/etc/logstash/certificates"' >> /etc/environment
 
+
+
 ## this path will be used to call the bin/certutil function of elasticsearch
 ## THEN EXPORT THE PATH FOR ELASTICSEARCH bin directories.
 echo 'export ELASTICSEARCH_PATH="/usr/share/elasticsearch"' >> ~/.bashrc
 echo 'export ELASTICSEARCH_PATH="/usr/share/elasticsearch"' >> /etc/environment
+
+
+## PATH TO LOGSTASH
+echo 'export LOGSTASH_PATH="/etc/logstash"' >> ~/.bashrc
+echo 'export LOGSTASH_PATH="/etc/logstash"' >> /etc/environment
+
+## PATH TO LOGSTASH CONFIGURATION DIRECTORY.
+echo 'export LOGSTASH_CONFIG_PATH="/etc/logstash/conf.d"' >> ~/.bashrc
+echo 'export LOGSTASH_CONFIG_PATH="/etc/logstash/conf.d"' >> /etc/environment
 
 ## Now since we are using digitalocean with IPV4, we need to export an IP addresses variable.
 ## get the IP address of the droplet.
 IPS=$(hostname -I)
 IPS=$(echo "$IPS" | sed "s/\s/,/g")
 #IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-command="export IP_ADDRESSES=\"${IPS}0.0.0.0\""
+command="export LOGSTASH_SERVER_IP_ADDRESSES=\"${IPS}0.0.0.0\""
 echo "${command}" >> ~/.bashrc
 echo "${command}" >> /etc/environment
 

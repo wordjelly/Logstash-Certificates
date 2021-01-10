@@ -1,5 +1,6 @@
 # Logstash-Certificates
-Simplify creation of Logstash SSL certificates.
+Getting Logstash to work is not easy. 
+Follow the guide below.
 
 ## Download Elasticsearch and Logstash
 1. Clone the repo
@@ -34,6 +35,8 @@ This will automatically set the environment variables:
 2. ELASTICSEARCH PATH
 3. IP_ADDRESSES
 4. LOGSTASH PORT
+5. LOGSTASH_PATH
+6. LOGSTASH_CONFIG_PATH
 
 You can change them directly in the above two files if you need to.
 
@@ -51,10 +54,10 @@ export SSL_CERTIFICATES_PATH="/path/to/logstash/directory"
 ## your clients can also use your machines IP address, like 192.168.1.5 for eg (you can find this in wifi-settings in your ethernet connection)
 ## basically add as many ip's as you like, to make sure the certificate includes them. Then as long as logstash is running on these IP's everything works.
 
-export IP_ADDRESSES="0.0.0.0,192.168.1.5,192.168.1.13"
+export LOGSTASH_SERVER_IP_ADDRESSES="0.0.0.0,192.168.1.5,192.168.1.13"
 
 ## IN order to test your certificates, using sh ./check_cert, curl needs to know which IP address to hit. By default check_cert will use 0.0.0.0 as the IP address to test the certificate against logstash. If however, you already know which IP address your Logstash is running on, simply export and env var like this, and the script uses that instead. This is also used by the sample ruby script, which will otherwise try to resolve the machine's ip address and use that.
-export IP_ADDRESS="0.0.0.0" 
+export LOGSTASH_SERVER_IP_ADDRESS="0.0.0.0" 
 
 
 ## the hostname of your machine(the qualified host like: www.google.com, where logstash will run, if it is running on a domain.)
@@ -62,26 +65,58 @@ export HOSTNAME="www.example.com"
 
 ## the port at which logstash will be running
 export LOGSTASH_PORT=1443
+
+## the path to the logstash directory
+export LOGSTASH_PATH=/home/whatever/logstash
+
+## the path to the logstash config directory
+export LOGSTASH_CONFIG_PATH="/home/whatever/logstash/config/"
 ```
 
 
 ## Generate Certificates:
 
 ```
-./sh make_cert.sh
+./sh 2_make_cert.sh
 ```
 
 The commmand should create a directory called "ssl_certificates" under your SSL_CERTIFICATES_PATH directory. It will contain two directories "host" and "ca". The host contains the client key and certificate. the "ca" directory contains the CA key and certificate.
 
-5. Copy the logstash_ssl.conf file from the repo to the logstash config directory(either /etc/logstash/conf.d/ or your own custom place where you installed logstash). This file contains logstash configuration for a 'tcp' input.
+## Generate and Copy the Logstash SSL Configuration File
+
+Before doing this, you should set the following environment variables
+
+1.ES_HOST : The full host (with port) of the elasticsearch cluster that will receive the logs. If you don' set this environment variable, it will default to http://localhost:9200
+
+2.ES_USER : The username for the elasticsearch cluster. This defaults to blank.
+
+3.ES_PASSWORD : The password for the elasticsearch cluster. This defaults to blank.
+
+4.ES_INDEX : The index name for the logstash logs. This defaults to "logstash-logs". THis index gets automatically created if it doesnt exist.
+
+5.EMAIL_LOGS_TO : The email to which emails should be sent , defaults to "root@127.0.0.1". Please refer to the postfix configuration section to get this to be configured properly.
+
+6.EMAIL_LOGS_FROM : The email from which the logs are being sent defaults to : "root@127.0.0.1"
+
+7.EMAIL_LOGS_SUBJECT:  Subject for log emails, defaults to  "Logs".
+
+8.EMAIL_PORT : the port at which emails should be sent, this defaults to 25 - as we assume you will use postfix. If you are using mailcatcher(testing) use port 1025.
+
+
+9.LOGSTASH_CONFIG_PATH : the path to the logstash configuration directory, defaults to /etc/logstash/conf.d. This is where the generated configuration file will be copied.
+
 
 ```
-cp ./logstash_ssl.conf path/to/logstash-/config/
+./sh 3_copy_logstash_ssl_config.sh
 ```
 
-6. Run the logstash server with the configuration file
+
+## Restart Logstash Service
 
 ```
+sh ./4_restart_logstash_service.sh
+
+#If you want to do this manually for testing -->
 #to start logstash as a service
 # sudo systemctl stop logstash.service
 # sudo systemctl start logstash.service
@@ -90,9 +125,7 @@ cp ./logstash_ssl.conf path/to/logstash-/config/
 bin/logstash -f ./config/logstash_ssl.conf
 ```
 
-THe server should boot without errors. If you got any errors, you did something wrong.
-
-7. Check if ssl works, by running 
+## Check Certificate
 
 ```
 sh ./check_cert.sh
@@ -121,7 +154,7 @@ Note that you need to open this port to the outside world, on your machine, if y
 ### Points to note:
 We didn't explicitly specify a hostname in the logstash_ssl.conf file's tcp => input.
 This is because it defaults to 0.0.0.0 and that is already included in our certificates.
-If your logstash port is open to the external internet, you can leave this as it is, since traffic on your machines IP address will automatically get forwarded to 0.0.0.0. If logstash is not open to the public internet and you want it running on a specific host, you can specify that, but make sure to add it to your ENV['IP_ADDRESSES'].
+If your logstash port is open to the external internet, you can leave this as it is, since traffic on your machines IP address will automatically get forwarded to 0.0.0.0. If logstash is not open to the public internet and you want it running on a specific host, you can specify that, but make sure to add it to your ENV['LOGSTASH_SERVER_IP_ADDRESSES'].
 
 ## Send Rails Logs to Logstash over SSL:
 

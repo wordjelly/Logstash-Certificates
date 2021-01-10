@@ -10,10 +10,10 @@ end
 
 def get_logstash_ip
 	machine_ip = get_machine_ip
-	return ENV["IP_ADDRESS"] unless ENV["IP_ADDRESS"].nil?
+	return ENV["LOGSTASH_SERVER_IP_ADDRESS"] unless ENV["LOGSTASH_SERVER_IP_ADDRESS"].nil?
 
-	unless ENV["IP_ADDRESSES"].blank?
-		ENV["IP_ADDRESSES"].split(",").each do |ip|
+	unless ENV["LOGSTASH_SERVER_IP_ADDRESSES"].blank?
+		ENV["LOGSTASH_SERVER_IP_ADDRESSES"].split(",").each do |ip|
 			if machine_ip == ip
 				return ip
 			end
@@ -42,7 +42,7 @@ ssl_socket = OpenSSL::SSL::SSLSocket.new(socket, ssl_context)
 ssl_socket.sync_close = true
 ssl_socket.connect
 
-ssl_socket.puts(JSON.generate(message: "hello"))
+ssl_socket.puts(JSON.generate(message: {"message" => "hi"}))
 while line = ssl_socket.gets
   p line
 end
