@@ -110,6 +110,17 @@ Before doing this, you should set the following environment variables
 ./sh 3_copy_logstash_ssl_config.sh
 ```
 
+## Create Logstash Index:
+
+The logstash-logs index will automatically add a template, which will index all the terms that it normally expects. This however does not contain the 'status' and 'tags' as keywords, i.e these fields are not indexed.
+To index them, just run:
+
+```
+./sh 3b_create_es_index.sh
+```
+
+At the end, make sure you go to the kibana UI and recreate the index pattern, for your index, otherwise the new properties wont be seen.
+
 
 ## Restart Logstash Service
 
