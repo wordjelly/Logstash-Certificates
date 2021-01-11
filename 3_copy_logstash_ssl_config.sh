@@ -49,3 +49,4 @@ value=$(echo "$value" | sed "s/\${SSL_CERTIFICATES_PATH}/$ESCAPED_REPLACE/g")
 echo $value
 echo $value > $LOGSTASH_CONFIG_PATH/logstash_ssl.conf
 
+
